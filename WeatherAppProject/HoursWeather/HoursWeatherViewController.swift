@@ -30,8 +30,6 @@ class HoursWeatherViewController: UIViewController {
         presenter.setViewDelegate(delegate: self)
         
         if let coordinate = locationManager.location?.coordinate {
-            print("!!!!!!!!!!!!!!!!")
-            print(coordinate)
             presenter.loadHoursWeather(lat: String(coordinate.latitude), lon: String(coordinate.longitude))
         }
         
@@ -56,9 +54,9 @@ class HoursWeatherViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        self.tabBarController?.navigationItem.rightBarButtonItem?.target = self
-        self.tabBarController?.navigationItem.rightBarButtonItem?.action = #selector(self.onNavBarButtonClicked)
+        let rightButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(onNavBarButtonClicked))
+        rightButton.tintColor = .white
+        navigationItem.rightBarButtonItem = rightButton
     }
     
     @objc func onNavBarButtonClicked() {

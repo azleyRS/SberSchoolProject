@@ -23,17 +23,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         currentWeatherViewController.tabBarItem = UITabBarItem(title: "Current Weather Data", image: UIImage(systemName: "location"), tag: 1)
         let hoursWeatherViewController = HoursWeatherViewController()
         hoursWeatherViewController.tabBarItem = UITabBarItem(title: "5 Day / 3 Hour Forecast", image: UIImage(systemName: "timer"), tag: 2)
-        tabBarController.viewControllers = [currentWeatherViewController, hoursWeatherViewController]
-        let navigationController = UINavigationController(rootViewController: tabBarController)
+        tabBarController.viewControllers = [
+            UINavigationController(rootViewController: currentWeatherViewController),
+            UINavigationController(rootViewController: hoursWeatherViewController)
+        ]
+        //let navigationController = UINavigationController(rootViewController: tabBarController)
         
         // Прозрачный статус бар
-        navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController.navigationBar.shadowImage = UIImage()
-        navigationController.navigationBar.isTranslucent = true
-        navigationController.view.backgroundColor = .clear
+//        navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
+//        navigationController.navigationBar.shadowImage = UIImage()
+//        navigationController.navigationBar.isTranslucent = true
+//        navigationController.view.backgroundColor = .clear
         
         
-        window?.rootViewController = navigationController
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
         return true

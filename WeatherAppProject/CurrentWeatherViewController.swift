@@ -67,6 +67,7 @@ class CurrentWeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
+        setupBackgroundImage()
         
         setupLocationManager()
         
@@ -79,7 +80,7 @@ class CurrentWeatherViewController: UIViewController {
         let rightButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(onNavBarButtonClicked))
         rightButton.tintColor = .white
         
-        self.tabBarController?.navigationItem.rightBarButtonItem = rightButton
+        navigationItem.rightBarButtonItem = rightButton
     }
     
     @objc private func onNavBarButtonClicked() {
@@ -152,6 +153,15 @@ class CurrentWeatherViewController: UIViewController {
     }
     
     private func setupNavBar() {
+        if let navigationController = navigationController {
+            navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
+            navigationController.navigationBar.shadowImage = UIImage()
+            navigationController.navigationBar.isTranslucent = true
+            navigationController.view.backgroundColor = .clear
+        }
+    }
+    
+    private func setupBackgroundImage() {
         let background = UIImage(named: "weatherBackground")
         var imageViewBackground : UIImageView
         imageViewBackground = UIImageView(frame: view.bounds)
