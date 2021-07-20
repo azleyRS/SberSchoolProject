@@ -55,6 +55,7 @@ class HoursPresenter {
                         case .success(let res):
                             self?.delegate?.showLocalHoursWeather(result: res)
                         case .failure(let err):
+                            // отображать алерт о неудаче
                             print(err)
                         }
                     })

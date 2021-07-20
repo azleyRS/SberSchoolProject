@@ -10,7 +10,8 @@ import CoreLocation
 
 class CurrentWeatherViewController: UIViewController {
         
-    private let networkManager = NetworkManager()
+    // вынести в конструктор
+    private let presenter = CurrentWeatherPresenter()
     private let locationManager = CLLocationManager()
     
     private lazy var handleResult: ((Result<CurrentWeather, ErrorMessage>) -> Void) = { result in
@@ -66,6 +67,9 @@ class CurrentWeatherViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        presenter.setViewDelegate(delegate: self)
+        
         setupNavBar()
         setupBackgroundImage()
         
@@ -84,26 +88,7 @@ class CurrentWeatherViewController: UIViewController {
     }
     
     @objc private func onNavBarButtonClicked() {
-        
-        let alert = UIAlertController(title: "City", message: "Enter city name", preferredStyle: .alert)
-        
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        alert.addAction(cancel)
-        let ok = UIAlertAction(title: "Ok", style: .default) {
-            (action) -> Void in
-            if let textField = alert.textFields?.first {
-                if let typedCity = textField.text, !typedCity.isEmpty {
-                    self.loadCityWeather(city: typedCity)
-                }
-            }
-        }
-        alert.addAction(ok)
-        alert.addTextField {
-            textField -> Void in
-            textField.placeholder = "City name"
-        }
-        
-        self.present(alert, animated: true, completion: nil)
+        presenter.onNavBarButtonClicked()
     }
     
     private func initViews() {
@@ -164,13 +149,21 @@ class CurrentWeatherViewController: UIViewController {
     private func setupBackgroundImage() {
         let background = UIImage(named: "weatherBackground")
         var imageViewBackground : UIImageView
-        imageViewBackground = UIImageView(frame: view.bounds)
+        imageViewBackground = UIImageView()
         imageViewBackground.contentMode =  .scaleAspectFill
         imageViewBackground.clipsToBounds = true
         imageViewBackground.image = background
-        imageViewBackground.center = view.center
         view.addSubview(imageViewBackground)
-        self.view.sendSubviewToBack(imageViewBackground)
+        view.sendSubviewToBack(imageViewBackground)
+        imageViewBackground.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate(
+            [
+                imageViewBackground.topAnchor.constraint(equalTo: view.topAnchor),
+                imageViewBackground.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                imageViewBackground.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                imageViewBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ]
+        )
     }
     
     private func showCurrentTime() {
@@ -179,15 +172,6 @@ class CurrentWeatherViewController: UIViewController {
         dateFormatter.timeStyle = .medium
         dateFormatter.dateStyle = .long
         timeLabel.text = dateFormatter.string(from: currentTime)
-    }
-    
-    private func loadCityWeather(city: String) {
-        activityIndicator.startAnimating()
-        networkManager.getCurrentWeather(weatherType: .city(city: city), completion: handleResult)
-    }
-    
-    private func loadLocalWeather(coords: CLLocationCoordinate2D) {
-        networkManager.getCurrentWeather(weatherType: WeatherType.local(latitude: String(coords.latitude), longitude: String(coords.longitude)), completion: handleResult)
     }
 
     private func initIcon(iconUrl: URL) {
@@ -229,7 +213,8 @@ extension CurrentWeatherViewController : CLLocationManagerDelegate {
         if currentLocation.horizontalAccuracy > 0 {
             manager.stopUpdatingLocation()
             let coords = CLLocationCoordinate2DMake(currentLocation.coordinate.latitude, currentLocation.coordinate.longitude)
-            loadLocalWeather(coords: coords)
+            activityIndicator.startAnimating()
+            presenter.loadLocalWeather(latitude: String(coords.latitude), longitude: String(coords.longitude))
         }
     }
     
@@ -237,6 +222,28 @@ extension CurrentWeatherViewController : CLLocationManagerDelegate {
         if let error = error as? CLError, error.code == .denied {
            manager.stopUpdatingLocation()
            return
+        }
+    }
+}
+
+extension CurrentWeatherViewController : CurrentWeatherPresenterDelegateProtocol {
+    func showLocalWeather(result: CurrentWeather) {
+        DispatchQueue.main.async {
+            
+            // мб тоже вынести? хотя вроде единоразово используется
+            if let icon = result.weather.first?.icon,
+               let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
+                .appendingPathComponent("\(icon)@2x")
+                .appendingPathExtension("png") {
+                self.initIcon(iconUrl: iconUrl)
+            }
+            self.initInfo(temp: result.main.temp, city: result.name)
+        }
+    }
+    
+    func showAlert(alert: UIAlertController) {
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
         }
     }
 }
