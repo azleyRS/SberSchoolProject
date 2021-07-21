@@ -20,8 +20,11 @@ class HoursPresenter {
     
     weak var delegate: HoursPresenterDelegate?
     
-    // вынести в инициализацию
-    private let networkManager = NetworkManager()
+    private let networkManager: NetworkManagerProtocol
+    
+    init(networkManager: NetworkManagerProtocol) {
+        self.networkManager = networkManager
+    }
     
     public func loadHoursWeather(lat: String, lon: String) {
         networkManager.getFiveDaysWeather(weatherType: .local(latitude: lat, longitude: lon), completion: {

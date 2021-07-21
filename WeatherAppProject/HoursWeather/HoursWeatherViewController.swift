@@ -10,7 +10,7 @@ import CoreLocation
 
 class HoursWeatherViewController: UIViewController {
         
-    private let presenter  = HoursPresenter()
+    private let presenter: HoursPresenter
     private let locationManager = CLLocationManager()
     
     private var weatherData = [HoursCellModel]()
@@ -20,7 +20,16 @@ class HoursWeatherViewController: UIViewController {
         result.translatesAutoresizingMaskIntoConstraints = false
         return result
     }()
-
+    
+    init(presenter: HoursPresenter) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,7 +48,6 @@ class HoursWeatherViewController: UIViewController {
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
-        // tableView.frame = view.bounds - мб так
         NSLayoutConstraint.activate(
             [
                 tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -116,7 +124,7 @@ extension HoursWeatherViewController: HoursPresenterDelegateProtocol {
         }
         
         result.list.forEach { item in
-            ressss.append(HoursCellModel(city: cityName, time: getTime(item.dt), temperature: getTemp(item.main.temp), description: item.weather.first!.weatherDescription.rawValue, humidity: "Humidity is \(item.main.humidity)", wind: "Wind is \(item.wind.speed)"))
+            ressss.append(HoursCellModel(city: cityName, time: getTime(item.dt), temperature: getTemp(item.main.temp), description: item.weather.first!.weatherDescription, humidity: "Humidity is \(item.main.humidity)", wind: "Wind is \(item.wind.speed)"))
         }
         
         weatherData = ressss

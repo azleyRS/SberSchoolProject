@@ -10,23 +10,16 @@ import CoreLocation
 
 class CurrentWeatherViewController: UIViewController {
         
-    // вынести в конструктор
-    private let presenter = CurrentWeatherPresenter()
+    private let presenter: CurrentWeatherPresenter
     private let locationManager = CLLocationManager()
     
-    private lazy var handleResult: ((Result<CurrentWeather, ErrorMessage>) -> Void) = { result in
-        switch result {
-        case .success(let welcome):
-            if let icon = welcome.weather.first?.icon,
-               let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
-                .appendingPathComponent("\(icon)@2x")
-                .appendingPathExtension("png") {
-                self.initIcon(iconUrl: iconUrl)
-                self.initInfo(temp: welcome.main.temp, city: welcome.name)
-            }
-        case .failure(let err):
-            print(err)
-        }
+    init(presenter: CurrentWeatherPresenter) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private lazy var imageView: UIImageView = {
@@ -199,7 +192,6 @@ class CurrentWeatherViewController: UIViewController {
             guard let data = data, error == nil else { return }
             DispatchQueue.main.async() { [weak self] in
                 self?.imageView.image = UIImage(data: data)
-                self?.activityIndicator.stopAnimating()
             }
         }
     }
@@ -213,7 +205,6 @@ extension CurrentWeatherViewController : CLLocationManagerDelegate {
         if currentLocation.horizontalAccuracy > 0 {
             manager.stopUpdatingLocation()
             let coords = CLLocationCoordinate2DMake(currentLocation.coordinate.latitude, currentLocation.coordinate.longitude)
-            activityIndicator.startAnimating()
             presenter.loadLocalWeather(latitude: String(coords.latitude), longitude: String(coords.longitude))
         }
     }
@@ -244,6 +235,16 @@ extension CurrentWeatherViewController : CurrentWeatherPresenterDelegateProtocol
     func showAlert(alert: UIAlertController) {
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func startActivityIndicator() {
+        self.activityIndicator.startAnimating()
+    }
+    
+    func stopActivityIndicator() {
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
         }
     }
 }

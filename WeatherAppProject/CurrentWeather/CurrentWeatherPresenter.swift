@@ -13,6 +13,10 @@ protocol CurrentWeatherPresenterDelegateProtocol: AnyObject {
     func showLocalWeather(result: CurrentWeather)
     
     func showAlert(alert: UIAlertController)
+    
+    func startActivityIndicator()
+    
+    func stopActivityIndicator()
 }
 
 typealias CurrentPresenterDelegate = CurrentWeatherPresenterDelegateProtocol & UIViewController
@@ -20,50 +24,31 @@ typealias CurrentPresenterDelegate = CurrentWeatherPresenterDelegateProtocol & U
 class CurrentWeatherPresenter {
     weak var delegate : CurrentPresenterDelegate?
     
-    // вынести в инициализацию
-    private let networkManager = NetworkManager()
+    internal let networkManager: NetworkManagerProtocol
+    
+    init(networkManager: NetworkManagerProtocol) {
+        self.networkManager = networkManager
+    }
     
     public func setViewDelegate(delegate: CurrentPresenterDelegate) {
         self.delegate = delegate
     }
     
     public func loadLocalWeather(latitude: String, longitude: String) {
-        networkManager.getCurrentWeather(weatherType: .local(latitude: latitude, longitude: longitude), completion: {
-            [weak self] result in
-            switch result {
-            case .success(let res):
-                self?.delegate?.showLocalWeather(result: res)
-            case .failure(let err):
-                // отображать алерт о неудаче
-                print(err)
-            }
-        })
+        self.delegate?.startActivityIndicator()
+        networkManager.getCurrentWeather(weatherType: .local(latitude: latitude, longitude: longitude),completion:self.handleNetworkResult)
     }
     
     public func onNavBarButtonClicked() {
-        
         let alert = UIAlertController(title: "City", message: "Enter city name", preferredStyle: .alert)
-        
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alert.addAction(cancel)
         let ok = UIAlertAction(title: "Ok", style: .default) {
             (action) -> Void in
             if let textField = alert.textFields?.first {
                 if let typedCity = textField.text, !typedCity.isEmpty {
-                    self.networkManager.getCurrentWeather(weatherType: .city(city: typedCity), completion: {
-                        [weak self] result in
-                        switch result {
-                        case .success(let res):
-                            self?.delegate?.showLocalWeather(result: res)
-                        case .failure(let err):
-                            // отображать алерт о неудаче
-                            if let delegate = self?.delegate,
-                               let self = self {
-                                delegate.showAlert(alert: self.createErrorAlert(error: err))
-                            }
-                            print(err)
-                        }
-                    })
+                    self.delegate?.startActivityIndicator()
+                    self.networkManager.getCurrentWeather(weatherType: .city(city: typedCity), completion:self.handleNetworkResult)
                 }
             }
         }
@@ -72,7 +57,6 @@ class CurrentWeatherPresenter {
             textField -> Void in
             textField.placeholder = "City name"
         }
-        
         self.delegate?.showAlert(alert: alert)
     }
     
@@ -80,6 +64,22 @@ class CurrentWeatherPresenter {
         let errorAlert = UIAlertController(title: error.rawValue, message: "Try again later", preferredStyle: .alert)
         errorAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         return errorAlert
+    }
+    
+    private lazy var handleNetworkResult: ((Result<CurrentWeather, ErrorMessage>) -> Void) = {
+        [weak self] result in
+        switch result {
+        case .success(let res):
+            self?.delegate?.showLocalWeather(result: res)
+        case .failure(let err):
+            // отображать алерт о неудаче
+            if let delegate = self?.delegate,
+               let self = self {
+                delegate.showAlert(alert: self.createErrorAlert(error: err))
+            }
+            print(err)
+        }
+        self?.delegate?.stopActivityIndicator()
     }
 
 }
