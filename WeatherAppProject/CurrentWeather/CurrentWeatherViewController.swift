@@ -81,7 +81,26 @@ class CurrentWeatherViewController: UIViewController {
     }
     
     @objc private func onNavBarButtonClicked() {
-        presenter.onNavBarButtonClicked()
+        
+        let alert = UIAlertController(title: "City", message: "Enter city name", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancel)
+        let ok = UIAlertAction(title: "Ok", style: .default) {
+            (action) -> Void in
+            if let textField = alert.textFields?.first {
+                if let typedCity = textField.text, !typedCity.isEmpty {
+                    //presenter.startActivityIndicator()
+                    self.presenter.getCurrentWeather(city: typedCity)
+                }
+            }
+        }
+        alert.addAction(ok)
+        alert.addTextField {
+            textField -> Void in
+            textField.placeholder = "City name"
+        }
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     private func initViews() {
@@ -220,8 +239,6 @@ extension CurrentWeatherViewController : CLLocationManagerDelegate {
 extension CurrentWeatherViewController : CurrentWeatherPresenterDelegateProtocol {
     func showLocalWeather(result: CurrentWeather) {
         DispatchQueue.main.async {
-            
-            // мб тоже вынести? хотя вроде единоразово используется
             if let icon = result.weather.first?.icon,
                let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
                 .appendingPathComponent("\(icon)@2x")
@@ -232,9 +249,11 @@ extension CurrentWeatherViewController : CurrentWeatherPresenterDelegateProtocol
         }
     }
     
-    func showAlert(alert: UIAlertController) {
+    func showAlert(title: String) {
         DispatchQueue.main.async {
-            self.present(alert, animated: true, completion: nil)
+            let errorAlert = UIAlertController(title: title, message: "Try again later", preferredStyle: .alert)
+            errorAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            self.present(errorAlert, animated: true, completion: nil)
         }
     }
     

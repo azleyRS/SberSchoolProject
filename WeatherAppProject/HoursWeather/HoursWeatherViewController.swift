@@ -12,9 +12,7 @@ class HoursWeatherViewController: UIViewController {
         
     private let presenter: HoursPresenter
     private let locationManager = CLLocationManager()
-    
-    private var weatherData = [HoursCellModel]()
-    
+        
     lazy var tableView: UITableView = {
         let result = UITableView()
         result.translatesAutoresizingMaskIntoConstraints = false
@@ -68,7 +66,23 @@ class HoursWeatherViewController: UIViewController {
     }
     
     @objc func onNavBarButtonClicked() {
-        presenter.onNavBarButtonClicked()
+        let alert = UIAlertController(title: "City", message: "Enter city name", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancel)
+        let ok = UIAlertAction(title: "Ok", style: .default) {
+            (action) -> Void in
+            if let textField = alert.textFields?.first {
+                if let typedCity = textField.text, !typedCity.isEmpty {
+                    self.presenter.loadHoursCityWeather(city: typedCity)
+                }
+            }
+        }
+        alert.addAction(ok)
+        alert.addTextField {
+            textField -> Void in
+            textField.placeholder = "City name"
+        }
+        self.present(alert, animated: true, completion: nil)
     }
     
 }
@@ -86,56 +100,25 @@ extension HoursWeatherViewController : UITableViewDelegate {
 }
 
 extension HoursWeatherViewController : UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return weatherData.count
+        return presenter.weatherData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: WeatherTableViewCell.identifier, for: indexPath)
-        
-        print(weatherData)
         if let weatherCell = cell as? WeatherTableViewCell {
-            weatherCell.updateView(weater: weatherData[indexPath.row])
+            weatherCell.updateView(weater: presenter.weatherData[indexPath.row])
         }
-        
         return cell
     }
 }
 
 extension HoursWeatherViewController: HoursPresenterDelegateProtocol {
-    func showLocalHoursWeather(result: FiveDaysWeatherModel) {
-        var ressss = [HoursCellModel]()
-        
-        let cityName = result.city.name
-        let measurementFormatter = MeasurementFormatter()
-        measurementFormatter.numberFormatter.maximumFractionDigits = 0
-        measurementFormatter.unitOptions = .providedUnit
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .short
-        dateFormatter.dateStyle = .short
-        
-        func getTemp(_ temp : Double) -> String {
-            let result = Measurement(value: temp, unit: UnitTemperature.kelvin).converted(to: UnitTemperature.celsius)
-            return measurementFormatter.string(from: result)
-        }
-        
-        func getTime(_ time: Int) -> String {
-            return dateFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(time)))
-        }
-        
-        result.list.forEach { item in
-            ressss.append(HoursCellModel(city: cityName, time: getTime(item.dt), temperature: getTemp(item.main.temp), description: item.weather.first!.weatherDescription, humidity: "Humidity is \(item.main.humidity)", wind: "Wind is \(item.wind.speed)"))
-        }
-        
-        weatherData = ressss
-        
+    
+    func showLocalHoursWeather() {   
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
     }
-    
-    func showAlert(alert: UIAlertController) {
-        self.present(alert, animated: true, completion: nil)
-    }
-
 }

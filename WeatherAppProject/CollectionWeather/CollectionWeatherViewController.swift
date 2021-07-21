@@ -12,5 +12,5 @@ class CollectionWeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
 }
