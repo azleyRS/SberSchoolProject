@@ -89,7 +89,6 @@ class CurrentWeatherViewController: UIViewController {
             (action) -> Void in
             if let textField = alert.textFields?.first {
                 if let typedCity = textField.text, !typedCity.isEmpty {
-                    //presenter.startActivityIndicator()
                     self.presenter.getCurrentWeather(city: typedCity)
                 }
             }
@@ -187,7 +186,7 @@ class CurrentWeatherViewController: UIViewController {
     }
 
     private func initIcon(iconUrl: URL) {
-        downloadImage(from: iconUrl)
+        imageView.loadImage(url: iconUrl)
     }
     
     private func initInfo(temp: Double, city: String) {
@@ -201,20 +200,6 @@ class CurrentWeatherViewController: UIViewController {
             self?.showCurrentTime()
         }
     }
-    
-    private func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
-        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
-    }
-
-    private func downloadImage(from url: URL) {
-        getData(from: url) { data, response, error in
-            guard let data = data, error == nil else { return }
-            DispatchQueue.main.async() { [weak self] in
-                self?.imageView.image = UIImage(data: data)
-            }
-        }
-    }
-
 }
 
 extension CurrentWeatherViewController : CLLocationManagerDelegate {
@@ -243,7 +228,7 @@ extension CurrentWeatherViewController : CurrentWeatherPresenterDelegateProtocol
                let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
                 .appendingPathComponent("\(icon)@2x")
                 .appendingPathExtension("png") {
-                self.initIcon(iconUrl: iconUrl)
+                self.imageView.loadImage(url: iconUrl)
             }
             self.initInfo(temp: result.main.temp, city: result.name)
         }

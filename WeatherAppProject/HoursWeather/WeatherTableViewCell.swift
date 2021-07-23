@@ -53,9 +53,17 @@ class WeatherTableViewCell: UITableViewCell {
         return result
     }()
     
+    lazy private var image: UIImageView = {
+        let result = UIImageView()
+        result.translatesAutoresizingMaskIntoConstraints = false
+        result.contentMode = .center
+        return result
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        contentView.addSubview(image)
         contentView.addSubview(cityLabel)
         contentView.addSubview(timeLabel)
         contentView.addSubview(temperatureLabel)
@@ -76,6 +84,12 @@ class WeatherTableViewCell: UITableViewCell {
     
     override func updateConstraints() {
         NSLayoutConstraint.activate([
+            
+            image.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            image.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            image.heightAnchor.constraint(equalToConstant: 16),
+            image.widthAnchor.constraint(equalToConstant: 16),
+            
             cityLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             cityLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             
@@ -99,7 +113,6 @@ class WeatherTableViewCell: UITableViewCell {
         super.updateConstraints()
     }
     
-    // убрать мб
     func updateView(weater: HoursCellModel){
         cityLabel.text = weater.city
         timeLabel.text = weater.time
@@ -107,6 +120,12 @@ class WeatherTableViewCell: UITableViewCell {
         descriptionLabel.text = weater.description
         humidityLabel.text = weater.humidity
         windLabel.text = weater.wind
+        if  let imageId = weater.imageId,
+            let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
+            .appendingPathComponent("\(imageId)@2x")
+            .appendingPathExtension("png") {
+        image.loadImage(url: iconUrl)
+        }
     }
     
 }

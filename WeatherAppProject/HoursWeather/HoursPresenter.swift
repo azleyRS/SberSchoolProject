@@ -64,7 +64,7 @@ class HoursPresenter {
 
             res.list.forEach { item in
                 resultList.append(
-                    HoursCellModel(city: cityName, time: getTime(item.dt), temperature: getTemp(item.main.temp), description: item.weather.first!.weatherDescription, humidity: "Humidity is \(item.main.humidity)", wind: "Wind is \(item.wind.speed)"))
+                    HoursCellModel(city: cityName, time: getTime(item.dt), temperature: getTemp(item.main.temp), description: item.weather.first!.weatherDescription, humidity: "Humidity is \(item.main.humidity)", wind: "Wind is \(item.wind.speed)", imageId: item.weather.first?.icon))
             }
 
             self?.weatherData = resultList

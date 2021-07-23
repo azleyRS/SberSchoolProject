@@ -14,19 +14,22 @@ class HoursCellModel {
     let description : String
     let humidity : String
     let wind : String
+    let imageId : String?
     
     init(city: String,
          time: String,
          temperature: String,
          description: String,
          humidity: String,
-         wind: String) {
+         wind: String,
+         imageId: String?) {
         self.city = city
         self.time = time
         self.temperature = temperature
         self.description = description
         self.humidity = humidity
         self.wind = wind
+        self.imageId = imageId
     }
 }
 
