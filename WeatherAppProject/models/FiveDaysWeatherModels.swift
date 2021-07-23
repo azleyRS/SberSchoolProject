@@ -7,13 +7,27 @@
 
 import Foundation
 
-struct HoursCellModel: Codable {
+class HoursCellModel {
     let city : String
-    let time : String
+    @objc let time : String
     let temperature : String
     let description : String
     let humidity : String
     let wind : String
+    
+    init(city: String,
+         time: String,
+         temperature: String,
+         description: String,
+         humidity: String,
+         wind: String) {
+        self.city = city
+        self.time = time
+        self.temperature = temperature
+        self.description = description
+        self.humidity = humidity
+        self.wind = wind
+    }
 }
 
 // MARK: - Welcome

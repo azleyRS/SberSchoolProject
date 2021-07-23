@@ -16,6 +16,8 @@ protocol HoursPresenterDelegateProtocol: AnyObject {
 class HoursPresenter {
     
     private(set) var weatherData = [HoursCellModel]()
+    private(set) var weatherSectionsData = [[HoursCellModel]]()
+    let sectionTitleCount = 4
     
     weak var delegate: HoursPresenterDelegateProtocol?
     
@@ -61,7 +63,8 @@ class HoursPresenter {
             }
 
             res.list.forEach { item in
-                resultList.append(HoursCellModel(city: cityName, time: getTime(item.dt), temperature: getTemp(item.main.temp), description: item.weather.first!.weatherDescription, humidity: "Humidity is \(item.main.humidity)", wind: "Wind is \(item.wind.speed)"))
+                resultList.append(
+                    HoursCellModel(city: cityName, time: getTime(item.dt), temperature: getTemp(item.main.temp), description: item.weather.first!.weatherDescription, humidity: "Humidity is \(item.main.humidity)", wind: "Wind is \(item.wind.speed)"))
             }
 
             self?.weatherData = resultList

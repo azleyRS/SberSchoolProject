@@ -39,7 +39,6 @@ class HoursWeatherViewController: UIViewController {
         if let coordinate = locationManager.location?.coordinate {
             presenter.loadHoursWeather(lat: String(coordinate.latitude), lon: String(coordinate.longitude))
         }
-        
     }
     
     func initViews() {
