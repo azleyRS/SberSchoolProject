@@ -19,6 +19,8 @@ class CollectionWeatherPresenter {
     
     weak var delegate: CollectionWeatherPresenterDelegateProtocol?
     
+    var fetchedRC: NSFetchedResultsController<CoreDataWeatherEntity>?
+    
     private let persistentContainer: NSPersistentContainer
     var collectionDataSource = [HoursCellModel]()
 
@@ -32,23 +34,30 @@ class CollectionWeatherPresenter {
     
     public func loadWeatherList() {
         do {
-            let weatherEntityList: [CoreDataWeatherEntity] = try persistentContainer.viewContext.fetch(CoreDataWeatherEntity.fetchRequest())
-            collectionDataSource = weatherEntityList.map{
-                HoursCellModel(
-                    city: $0.city,
-                    time: $0.time,
-                    temperature: $0.temperature,
-                    description: $0.weatherDescription,
-                    humidity: $0.humidity,
-                    wind: $0.wind,
-                    imageId: $0.icon
-                )
-            }
+            let fetchRequest: NSFetchRequest<CoreDataWeatherEntity> = CoreDataWeatherEntity.fetchRequest()
+            fetchRequest.sortDescriptors = .init()
+            fetchedRC = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                        managedObjectContext: persistentContainer.viewContext,
+                                                        sectionNameKeyPath: nil,
+                                                        cacheName: nil)
+            try fetchedRC?.performFetch()
         } catch let error as NSError{
             // мб добавить алерт или надпись, что ничего не загрузилось
             print("Could not fetch. \(error), \(error.userInfo)")
         }
         delegate?.loadWeather()
+    }
+    
+    
+    func getCellModel(indexPath: IndexPath) -> HoursCellModel {
+        let coreDataModel = self.fetchedRC?.object(at: indexPath)
+        return HoursCellModel(city: coreDataModel?.city ?? "city",
+                              time: coreDataModel?.time ?? "time",
+                              temperature: coreDataModel?.temperature ?? "temperature",
+                              description: coreDataModel?.weatherDescription ?? "weatherDescription",
+                              humidity: coreDataModel?.humidity ?? "humidity",
+                              wind: coreDataModel?.wind ?? "wind",
+                              imageId: coreDataModel?.icon)
     }
     
 }

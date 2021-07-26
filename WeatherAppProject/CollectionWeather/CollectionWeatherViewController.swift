@@ -159,7 +159,8 @@ extension CollectionWeatherViewController : UICollectionViewDelegate {
 extension CollectionWeatherViewController : UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        presenter.collectionDataSource.count
+        // в презентер?
+        presenter.fetchedRC?.fetchedObjects?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -167,8 +168,9 @@ extension CollectionWeatherViewController : UICollectionViewDataSource {
         
         // тут надо доработать ячейку
         if let cell = cell as? CustomCollectionViewCell {
+            let weatherModel = presenter.getCellModel(indexPath: indexPath)
             cell.isEditing = isEditing
-            cell.updateCellInfo(weatherModel: presenter.collectionDataSource[indexPath.item])
+            cell.updateCellInfo(weatherModel: weatherModel)
         }
         return cell
     }

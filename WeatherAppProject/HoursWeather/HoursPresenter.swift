@@ -19,8 +19,6 @@ protocol HoursPresenterDelegateProtocol: AnyObject {
 class HoursPresenter {
     
     private(set) var weatherData = [HoursCellModel]()
-    private(set) var weatherSectionsData = [[HoursCellModel]]()
-    let sectionTitleCount = 4
     
     weak var delegate: HoursPresenterDelegateProtocol?
     
