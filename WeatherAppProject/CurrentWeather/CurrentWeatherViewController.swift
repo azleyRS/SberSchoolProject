@@ -32,7 +32,8 @@ class CurrentWeatherViewController: UIViewController {
     private lazy var tempLabel: UILabel = {
         let result = UILabel()
         result.translatesAutoresizingMaskIntoConstraints = false
-        result.textColor = .black
+        result.textColor = .white
+        result.font = UIFont(name: "EuphemiaUCAS-Bold", size: 30)
         result.text = "Loading temperature..."
         return result
     }()
@@ -40,7 +41,8 @@ class CurrentWeatherViewController: UIViewController {
     private lazy var cityLabel: UILabel = {
         let result = UILabel()
         result.translatesAutoresizingMaskIntoConstraints = false
-        result.textColor = .black
+        result.textColor = .white
+        result.font = UIFont(name: "EuphemiaUCAS-Bold", size: 30)
         return result
     }()
     
@@ -48,7 +50,8 @@ class CurrentWeatherViewController: UIViewController {
     private lazy var timeLabel: UILabel = {
         let result = UILabel()
         result.translatesAutoresizingMaskIntoConstraints = false
-        result.textColor = .black
+        result.textColor = .white
+        result.font = UIFont(name: "EuphemiaUCAS-Bold", size: 14)
         return result
     }()
     
@@ -196,6 +199,8 @@ class CurrentWeatherViewController: UIViewController {
             measurementFormatter.unitOptions = .providedUnit
             let result = Measurement(value: temp, unit: UnitTemperature.kelvin).converted(to: UnitTemperature.celsius)
             self?.tempLabel.text = String(measurementFormatter.string(from: result))
+            self?.tempLabel.font = UIFont(name: "EuphemiaUCAS-Bold", size: 50)
+
             self?.cityLabel.text = city
             self?.showCurrentTime()
         }

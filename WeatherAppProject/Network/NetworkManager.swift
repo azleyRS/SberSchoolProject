@@ -91,16 +91,6 @@ class NetworkManager: NetworkManagerProtocol {
         let task = URLSession.shared.dataTask(with: resultUrl) {
             (data, response, error) in
             
-            
-            
-            //api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
-            //api.openweathermap.org/data/2.5/forecast?lat=37.785834&lon=-122.406417&appid=b3bdb37b1f087eb7b3b1a674bdcbb859
-            print("???????????")
-            print(resultUrl)
-            print(data)
-            print(response)
-            print(error)
-            
             if let _ = error {
                 completion(.failure(.invalidData))
                 return

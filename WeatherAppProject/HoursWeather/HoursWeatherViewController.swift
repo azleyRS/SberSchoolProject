@@ -31,10 +31,16 @@ class HoursWeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        initViews()
+        self.navigationController!.navigationBar.barStyle = .black
+        self.navigationController!.navigationBar.isTranslucent = true
+        self.navigationController!.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        self.navigationController!.navigationBar.tintColor = #colorLiteral(red: 1, green: 0.99997437, blue: 0.9999912977, alpha: 1)
         
+        initViews()
+        tableView.separatorStyle = .none
         // presenter
         presenter.setViewDelegate(delegate: self)
+        self.navigationController?.navigationItem.title = "123"
         
         if let coordinate = locationManager.location?.coordinate {
             presenter.loadHoursWeather(lat: String(coordinate.latitude), lon: String(coordinate.longitude))
@@ -62,6 +68,13 @@ class HoursWeatherViewController: UIViewController {
         let rightButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(onNavBarButtonClicked))
         rightButton.tintColor = .white
         navigationItem.rightBarButtonItem = rightButton
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onSaveClick))
+    }
+    
+    @objc func onSaveClick() {
+        print("onSaveClick")
+        presenter.saveWeather()
     }
     
     @objc func onNavBarButtonClicked() {
@@ -118,6 +131,12 @@ extension HoursWeatherViewController: HoursPresenterDelegateProtocol {
     func showLocalHoursWeather() {   
         DispatchQueue.main.async {
             self.tableView.reloadData()
+        }
+    }
+    
+    func setTitle(title: String) {
+        DispatchQueue.main.async {
+            self.navigationItem.title = title
         }
     }
 }

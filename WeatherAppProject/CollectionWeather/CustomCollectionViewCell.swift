@@ -19,10 +19,8 @@ class CustomCollectionViewCell: UICollectionViewCell {
     
     private let imageView: UIImageView = {
        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "house")
-        imageView.tintColor = .cyan
         imageView.translatesAutoresizingMaskIntoConstraints = false
-
+        imageView.contentMode = .center
         return imageView
     }()
     
@@ -34,19 +32,28 @@ class CustomCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
-    private let label: UILabel = {
+    private let timeLabel: UILabel = {
        let label = UILabel()
-        label.text = "Custom"
         label.textColor = .white
+        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    private let temperatureLabel: UILabel = {
+       let result = UILabel()
+        result.textColor = .white
+        result.textAlignment = .center
+        result.translatesAutoresizingMaskIntoConstraints = false
+        return result
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(imageView)
-        contentView.addSubview(label)
+        contentView.addSubview(timeLabel)
         contentView.addSubview(editingCircle)
+        contentView.addSubview(temperatureLabel)
     }
     
     required init?(coder: NSCoder) {
@@ -65,9 +72,15 @@ class CustomCollectionViewCell: UICollectionViewCell {
     override func updateConstraints() {
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            imageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            
+            timeLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor),
+            timeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            
+            temperatureLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 4),
+            temperatureLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            temperatureLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             
             editingCircle.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
             editingCircle.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
@@ -81,7 +94,16 @@ class CustomCollectionViewCell: UICollectionViewCell {
         return true
     }
     
-    func updateCellInfo(title: String) {
-        self.label.text = title
+    func updateCellInfo(weatherModel: HoursCellModel) {
+        self.timeLabel.text = weatherModel.time
+        
+        if let imageId = weatherModel.imageId,
+            let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
+            .appendingPathComponent("\(imageId)@2x")
+            .appendingPathExtension("png") {
+            self.imageView.loadImage(url: iconUrl)
+        }
+        
+        self.temperatureLabel.text = weatherModel.temperature
     }
 }

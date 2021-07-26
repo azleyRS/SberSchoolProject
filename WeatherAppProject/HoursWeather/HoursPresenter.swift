@@ -6,10 +6,13 @@
 //
 
 import Foundation
+import CoreData
 
 protocol HoursPresenterDelegateProtocol: AnyObject {
         
     func showLocalHoursWeather()
+    
+    func setTitle(title: String)
     
 }
 
@@ -22,9 +25,11 @@ class HoursPresenter {
     weak var delegate: HoursPresenterDelegateProtocol?
     
     private let networkManager: NetworkManagerProtocol
+    private let persistentContainer: NSPersistentContainer
     
-    init(networkManager: NetworkManagerProtocol) {
+    init(networkManager: NetworkManagerProtocol, persistentContainer: NSPersistentContainer) {
         self.networkManager = networkManager
+        self.persistentContainer = persistentContainer
     }
     
     public func loadHoursWeather(lat: String, lon: String) {
@@ -64,13 +69,49 @@ class HoursPresenter {
 
             res.list.forEach { item in
                 resultList.append(
-                    HoursCellModel(city: cityName, time: getTime(item.dt), temperature: getTemp(item.main.temp), description: item.weather.first!.weatherDescription, humidity: "Humidity is \(item.main.humidity)", wind: "Wind is \(item.wind.speed)", imageId: item.weather.first?.icon))
+                    HoursCellModel(
+                        city: cityName,
+                        time: getTime(item.dt),
+                        temperature: getTemp(item.main.temp),
+                        description: item.weather.first?.weatherDescription ?? "",
+                        humidity: String(item.main.humidity),
+                        wind: String(item.wind.speed),
+                        imageId: item.weather.first?.icon))
             }
 
             self?.weatherData = resultList
             self?.delegate?.showLocalHoursWeather()
+            self?.delegate?.setTitle(title: resultList.first?.city ?? "Choose city")
         case .failure(let err):
             print(err)
+        }
+    }
+    
+    func saveWeather() {
+        // here saving data
+        weatherData.forEach {
+            let weatherEntity = CoreDataWeatherEntity(entity: CoreDataWeatherEntity.entity(), insertInto: persistentContainer.viewContext)
+            weatherEntity.city = $0.city
+            weatherEntity.time = $0.time
+            weatherEntity.temperature = $0.temperature
+            weatherEntity.icon = $0.imageId
+            weatherEntity.humidity = $0.humidity
+            weatherEntity.weatherDescription = $0.description
+            weatherEntity.wind = $0.wind
+            saveContext()
+            print(weatherEntity)
+        }
+    }
+    
+    private func saveContext() {
+        let context = persistentContainer.viewContext
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                let error = error as NSError
+                fatalError("Some fatal error \(error)")
+            }
         }
     }
 }

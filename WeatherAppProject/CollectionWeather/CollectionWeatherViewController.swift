@@ -6,28 +6,49 @@
 //
 
 import UIKit
+import CoreData
 
 class CollectionWeatherViewController: UIViewController {
     
-    var collectionData = ["1","2","3","4","5","6","7","8","9","10","11","12"]
+    private let presenter: CollectionWeatherPresenter
     
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.itemSize = CGSize(width: (view.frame.size.width - 20) / 3
-                                 , height: (view.frame.size.width - 20) / 3)
-        layout.minimumLineSpacing = 10
+        // 3 в ряд довольно много - надо заменить на 2 элемента в ряду
+        layout.itemSize = CGSize(width: (view.frame.size.width - 20) / 2
+                                 , height: (view.frame.size.width - 20) / 2)
+        layout.minimumLineSpacing = 20
         layout.minimumInteritemSpacing = 10
         let result = UICollectionView(frame: .zero, collectionViewLayout: layout)
         result.translatesAutoresizingMaskIntoConstraints = false
         return result
     }()
-
+    
+    init(presenter: CollectionWeatherPresenter) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationController!.navigationBar.barStyle = .black
+        self.navigationController!.navigationBar.isTranslucent = true
+        self.navigationController!.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        self.navigationController!.navigationBar.tintColor = #colorLiteral(red: 1, green: 0.99997437, blue: 0.9999912977, alpha: 1)
+        
+        self.presenter.setViewDelegate(delegate: self)
+        
         initViews()
 
-        title = "Comments go here"
+        // мб стоит изменять заголовок в зависимости от наличия/отсутствия элементов
+        //title = "Comments go here"
+        
         let addButton = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addItem))
         self.navigationItem.rightBarButtonItem = addButton
         self.navigationItem.leftBarButtonItem = editButtonItem
@@ -37,6 +58,11 @@ class CollectionWeatherViewController: UIViewController {
         refreshContrl.tintColor = .blue
         refreshContrl.addTarget(self, action: #selector(pullToRefreshAction), for: .valueChanged)
         collectionView.refreshControl = refreshContrl
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presenter.loadWeatherList()
     }
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -77,32 +103,36 @@ class CollectionWeatherViewController: UIViewController {
             ]
         )
         collectionView.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: CustomCollectionViewCell.identifier)
-        
-        
     }
     
     @objc func addItem() {
-        let text = "\(collectionData.count + 1)  🍎"
-        collectionData.append(text)
-        let indexPath = IndexPath(row: collectionData.count - 1, section: 0)
-        collectionView.insertItems(at: [indexPath])
+        // удалить т.к. не будет тут добавления
+        print("addItem")
+//        let text = "\(collectionData.count + 1)  🍎"
+//        collectionData.append(text)
+//        let indexPath = IndexPath(row: collectionData.count - 1, section: 0)
+//        collectionView.insertItems(at: [indexPath])
     }
     
     // можно удалить потом
     @objc func pullToRefreshAction() {
+        // тоже можно удалить или заменить на анимацию какую
         addItem()
         collectionView.refreshControl?.endRefreshing()
     }
     
     @objc func deleteItems() {
-        if let selected = collectionView.indexPathsForSelectedItems {
-            // sorted т.к. порядок добавления в indexPathsForSelectedItems может быть рандомный
-            let items = selected.map { $0.item }.sorted().reversed()
-            for item in items {
-                collectionData.remove(at: item)
-            }
-            collectionView.deleteItems(at: selected)
-        }
+        print("deleteItems")
+        // а вот тут надо бы доделать удаление из CoreData и визуально
+        
+//        if let selected = collectionView.indexPathsForSelectedItems {
+//            // sorted т.к. порядок добавления в indexPathsForSelectedItems может быть рандомный
+//            let items = selected.map { $0.item }.sorted().reversed()
+//            for item in items {
+//                collectionData.remove(at: item)
+//            }
+//            collectionView.deleteItems(at: selected)
+//        }
     }
     
 }
@@ -113,12 +143,13 @@ extension CollectionWeatherViewController : UICollectionViewDelegate {
                 
         if !self.isEditing {
             print(indexPath)
+            // анимация эксперимента ради
             let transition = CATransition()
             transition.duration = 0.3
             transition.type = .init(rawValue: "flip")
             transition.subtype = CATransitionSubtype.fromLeft
             self.navigationController?.view.layer.add(transition, forKey: kCATransition)
-            self.navigationController?.pushViewController(DetailsViewController(text: collectionData[indexPath.item]), animated: false)
+            self.navigationController?.pushViewController(DetailsViewController(text: presenter.collectionDataSource[indexPath.item].temperature), animated: false)
         }
 
     }
@@ -128,19 +159,25 @@ extension CollectionWeatherViewController : UICollectionViewDelegate {
 extension CollectionWeatherViewController : UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        collectionData.count
+        presenter.collectionDataSource.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CustomCollectionViewCell.identifier, for: indexPath)
+        
+        // тут надо доработать ячейку
         if let cell = cell as? CustomCollectionViewCell {
-            cell.backgroundColor = .red
             cell.isEditing = isEditing
-            cell.updateCellInfo(title: "title \(collectionData[indexPath.item])")
+            cell.updateCellInfo(weatherModel: presenter.collectionDataSource[indexPath.item])
         }
         return cell
     }
-    
-    
-    
+}
+
+extension CollectionWeatherViewController: CollectionWeatherPresenterDelegateProtocol {
+    func loadWeather() {
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
 }
