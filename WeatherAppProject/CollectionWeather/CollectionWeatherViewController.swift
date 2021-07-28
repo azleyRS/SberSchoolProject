@@ -103,6 +103,7 @@ class CollectionWeatherViewController: UIViewController {
             ]
         )
         collectionView.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: CustomCollectionViewCell.identifier)
+        collectionView.register(HeaderCityCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCityCollectionReusableView.identifier)
     }
     
     @objc func addItem() {
@@ -125,14 +126,9 @@ class CollectionWeatherViewController: UIViewController {
         print("deleteItems")
         // а вот тут надо бы доделать удаление из CoreData и визуально
         
-//        if let selected = collectionView.indexPathsForSelectedItems {
-//            // sorted т.к. порядок добавления в indexPathsForSelectedItems может быть рандомный
-//            let items = selected.map { $0.item }.sorted().reversed()
-//            for item in items {
-//                collectionData.remove(at: item)
-//            }
-//            collectionView.deleteItems(at: selected)
-//        }
+        if let selected = collectionView.indexPathsForSelectedItems {
+            presenter.deleteItems(indexPaths: selected)
+        }
     }
     
 }
@@ -149,7 +145,7 @@ extension CollectionWeatherViewController : UICollectionViewDelegate {
             transition.type = .init(rawValue: "flip")
             transition.subtype = CATransitionSubtype.fromLeft
             self.navigationController?.view.layer.add(transition, forKey: kCATransition)
-            self.navigationController?.pushViewController(DetailsViewController(text: presenter.collectionDataSource[indexPath.item].temperature), animated: false)
+            self.navigationController?.pushViewController(DetailsViewController(text: presenter.getCellModel(indexPath: indexPath).temperature), animated: false)
         }
 
     }
@@ -158,9 +154,25 @@ extension CollectionWeatherViewController : UICollectionViewDelegate {
 
 extension CollectionWeatherViewController : UICollectionViewDataSource {
     
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return presenter.fetchedRC?.sections?.count ?? 0
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // в презентер?
-        presenter.fetchedRC?.fetchedObjects?.count ?? 0
+        //presenter.fetchedRC?.fetchedObjects?.count ?? 0
+        do{
+            try presenter.fetchedRC?.performFetch()
+        } catch {
+            print("fetchedRC?.performFetch()")
+        }
+        
+        guard let sections = presenter.fetchedRC?.sections,
+              let objs = sections[section].objects else {
+            return 0
+        }
+        
+        return objs.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -174,12 +186,32 @@ extension CollectionWeatherViewController : UICollectionViewDataSource {
         }
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCityCollectionReusableView.identifier, for: indexPath)
+        if let header = header as? HeaderCityCollectionReusableView,
+           let weatherModel = presenter.fetchedRC?.sections?[indexPath.section].objects?.first as? CoreDataWeatherEntity {
+            header.configurate(city: weatherModel.city)
+        }
+        return header
+    }
+    
 }
 
 extension CollectionWeatherViewController: CollectionWeatherPresenterDelegateProtocol {
+    func deleteItemsFromView(indexPaths: [IndexPath]) {
+        self.collectionView.deleteItems(at: indexPaths)
+    }
+    
     func loadWeather() {
         DispatchQueue.main.async {
             self.collectionView.reloadData()
         }
+    }
+}
+
+extension CollectionWeatherViewController : UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: view.frame.width, height: 50)
     }
 }

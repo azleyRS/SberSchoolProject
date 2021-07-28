@@ -60,6 +60,23 @@ class CurrentWeatherViewController: UIViewController {
         result.translatesAutoresizingMaskIntoConstraints = false
         return result
     }()
+    
+    private lazy var imageViewBackground : UIImageView = {
+        let backgroundImageName = UserDefaults.standard.string(forKey: "backgroundImageName") ?? "weatherBackground"
+        let background = UIImage(named: backgroundImageName)
+        var imageViewBackground : UIImageView
+        imageViewBackground = UIImageView()
+        imageViewBackground.contentMode =  .scaleAspectFill
+        imageViewBackground.clipsToBounds = true
+        imageViewBackground.image = background
+        imageViewBackground.translatesAutoresizingMaskIntoConstraints = false
+        return imageViewBackground
+    }()
+    
+    private lazy var toggle : UISwitch = {
+        let toggle = UISwitch()
+        return toggle
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,6 +98,35 @@ class CurrentWeatherViewController: UIViewController {
         rightButton.tintColor = .white
         
         navigationItem.rightBarButtonItem = rightButton
+        
+        let offLabel = UILabel()
+        offLabel.font = UIFont.boldSystemFont(ofSize: UIFont.smallSystemFontSize)
+        offLabel.text = "OFF"
+
+        let onLabel = UILabel()
+        onLabel.font = UIFont.boldSystemFont(ofSize: UIFont.smallSystemFontSize)
+        onLabel.text = "ON"
+
+        toggle.addTarget(self, action: #selector(toggleValueChanged(_:)), for: .valueChanged)
+
+        let stackView = UIStackView(arrangedSubviews: [offLabel, toggle, onLabel])
+        stackView.spacing = 8
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: stackView)
+        let name = UserDefaults.standard.string(forKey: "backgroundImageName") ?? "weatherBackground"
+        let isEnabled = name == "weatherBackground"
+        toggle.setOn(isEnabled, animated: false)
+    }
+    
+    @objc func toggleValueChanged(_ toggle: UISwitch) {
+        var imageName = "weatherBackground"
+        if toggle.isOn {
+            imageName = "weatherBackground"
+        } else {
+            imageName = "weatherBackground2"
+        }
+        imageViewBackground.image = UIImage(named: imageName)
+        UserDefaults.standard.setValue(imageName, forKey: "backgroundImageName")
     }
     
     @objc private func onNavBarButtonClicked() {
@@ -161,15 +207,8 @@ class CurrentWeatherViewController: UIViewController {
     }
     
     private func setupBackgroundImage() {
-        let background = UIImage(named: "weatherBackground")
-        var imageViewBackground : UIImageView
-        imageViewBackground = UIImageView()
-        imageViewBackground.contentMode =  .scaleAspectFill
-        imageViewBackground.clipsToBounds = true
-        imageViewBackground.image = background
         view.addSubview(imageViewBackground)
         view.sendSubviewToBack(imageViewBackground)
-        imageViewBackground.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate(
             [
                 imageViewBackground.topAnchor.constraint(equalTo: view.topAnchor),

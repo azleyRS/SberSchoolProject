@@ -12,7 +12,7 @@ protocol CollectionWeatherPresenterDelegateProtocol: AnyObject {
     
     func loadWeather()
     
-    func deleteItems()
+    func deleteItemsFromView(indexPaths: [IndexPath])
 }
 
 class CollectionWeatherPresenter {
@@ -35,10 +35,11 @@ class CollectionWeatherPresenter {
     public func loadWeatherList() {
         do {
             let fetchRequest: NSFetchRequest<CoreDataWeatherEntity> = CoreDataWeatherEntity.fetchRequest()
-            fetchRequest.sortDescriptors = .init()
+            let city = NSSortDescriptor(key: #keyPath(CoreDataWeatherEntity.city), ascending: true)
+            fetchRequest.sortDescriptors = [city]
             fetchedRC = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                         managedObjectContext: persistentContainer.viewContext,
-                                                        sectionNameKeyPath: nil,
+                                                        sectionNameKeyPath: #keyPath(CoreDataWeatherEntity.city),
                                                         cacheName: nil)
             try fetchedRC?.performFetch()
         } catch let error as NSError{
@@ -46,6 +47,30 @@ class CollectionWeatherPresenter {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
         delegate?.loadWeather()
+    }
+    
+    public func deleteItems(indexPaths: [IndexPath]) {
+        //let items = indexPaths.sorted().reversed() as [IndexPath]
+        let items = indexPaths
+        for item in items {
+            if let weatherModel = fetchedRC?.object(at: item) {
+                persistentContainer.viewContext.delete(weatherModel)
+            }
+        }
+        saveContext()
+        delegate?.deleteItemsFromView(indexPaths: items)
+    }
+    
+    private func saveContext() {
+        let context = persistentContainer.viewContext
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                let error = error as NSError
+                fatalError("Some fatal error \(error)")
+            }
+        }
     }
     
     
