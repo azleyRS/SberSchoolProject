@@ -71,3 +71,10 @@ struct Wind: Codable {
     let speed: Double
     let deg: Int
 }
+
+// MARK: - Presentation Models
+struct CurrentWeatherPresentationModel {
+    let city: String
+    let temperature: String
+    let date: String
+}

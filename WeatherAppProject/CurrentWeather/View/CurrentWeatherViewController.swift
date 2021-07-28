@@ -8,32 +8,26 @@
 import UIKit
 import CoreLocation
 
+
+/// ViewController для экрана с отображением текущей погоды
 class CurrentWeatherViewController: UIViewController {
         
     private let presenter: CurrentWeatherPresenter
     private let locationManager = CLLocationManager()
     
-    init(presenter: CurrentWeatherPresenter) {
-        self.presenter = presenter
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private lazy var imageView: UIImageView = {
+    private lazy var weatherIconView: UIImageView = {
         let result = UIImageView()
-        result.contentMode = .scaleAspectFit
+        result.contentMode = .center
         result.translatesAutoresizingMaskIntoConstraints = false
         return result
     }()
     
-    private lazy var tempLabel: UILabel = {
+    private lazy var temperatureLabel: UILabel = {
         let result = UILabel()
         result.translatesAutoresizingMaskIntoConstraints = false
         result.textColor = .white
         result.font = UIFont(name: "EuphemiaUCAS-Bold", size: 30)
+        // todo в презентер?
         result.text = "Loading temperature..."
         return result
     }()
@@ -62,13 +56,9 @@ class CurrentWeatherViewController: UIViewController {
     }()
     
     private lazy var imageViewBackground : UIImageView = {
-        let backgroundImageName = UserDefaults.standard.string(forKey: "backgroundImageName") ?? "weatherBackground"
-        let background = UIImage(named: backgroundImageName)
-        var imageViewBackground : UIImageView
-        imageViewBackground = UIImageView()
+        var imageViewBackground = UIImageView()
         imageViewBackground.contentMode =  .scaleAspectFill
         imageViewBackground.clipsToBounds = true
-        imageViewBackground.image = background
         imageViewBackground.translatesAutoresizingMaskIntoConstraints = false
         return imageViewBackground
     }()
@@ -77,6 +67,35 @@ class CurrentWeatherViewController: UIViewController {
         let toggle = UISwitch()
         return toggle
     }()
+    
+    private lazy var leftBarButtomSwithView : UIView = {
+        let offLabel = UILabel()
+        offLabel.font = UIFont.boldSystemFont(ofSize: UIFont.smallSystemFontSize)
+        offLabel.textColor = .white
+        offLabel.text = "Evening"
+
+        let onLabel = UILabel()
+        onLabel.font = UIFont.boldSystemFont(ofSize: UIFont.smallSystemFontSize)
+        onLabel.textColor = .white
+        onLabel.text = "Morning"
+
+        toggle.addTarget(self, action: #selector(toggleValueChanged(_:)), for: .valueChanged)
+
+        let stackView = UIStackView(arrangedSubviews: [offLabel, toggle, onLabel])
+        stackView.spacing = 8
+        return stackView
+    }()
+    
+    /// Конструктор вьюКонтроллера экрана с текущей погодой
+    /// - Parameter presenter: Презентер экрана с отображением текущей погоды
+    init(presenter: CurrentWeatherPresenter) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,51 +103,19 @@ class CurrentWeatherViewController: UIViewController {
         presenter.setViewDelegate(delegate: self)
         
         setupNavBar()
-        setupBackgroundImage()
         
         setupLocationManager()
         
         initViews()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        let rightButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(onNavBarButtonClicked))
-        rightButton.tintColor = .white
-        
-        navigationItem.rightBarButtonItem = rightButton
-        
-        let offLabel = UILabel()
-        offLabel.font = UIFont.boldSystemFont(ofSize: UIFont.smallSystemFontSize)
-        offLabel.text = "OFF"
-
-        let onLabel = UILabel()
-        onLabel.font = UIFont.boldSystemFont(ofSize: UIFont.smallSystemFontSize)
-        onLabel.text = "ON"
-
-        toggle.addTarget(self, action: #selector(toggleValueChanged(_:)), for: .valueChanged)
-
-        let stackView = UIStackView(arrangedSubviews: [offLabel, toggle, onLabel])
-        stackView.spacing = 8
-
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: stackView)
-        let name = UserDefaults.standard.string(forKey: "backgroundImageName") ?? "weatherBackground"
-        let isEnabled = name == "weatherBackground"
-        toggle.setOn(isEnabled, animated: false)
+    /// Обработка клика на свитче
+    /// - Parameter toggle: Нажатый свитч
+    @objc private func toggleValueChanged(_ toggle: UISwitch) {
+        presenter.switchToggle(isEnabled: toggle.isOn)
     }
     
-    @objc func toggleValueChanged(_ toggle: UISwitch) {
-        var imageName = "weatherBackground"
-        if toggle.isOn {
-            imageName = "weatherBackground"
-        } else {
-            imageName = "weatherBackground2"
-        }
-        imageViewBackground.image = UIImage(named: imageName)
-        UserDefaults.standard.setValue(imageName, forKey: "backgroundImageName")
-    }
-    
+    /// Обработка нажатия на иконку поиска в навБаре
     @objc private func onNavBarButtonClicked() {
         
         let alert = UIAlertController(title: "City", message: "Enter city name", preferredStyle: .alert)
@@ -152,6 +139,9 @@ class CurrentWeatherViewController: UIViewController {
     }
     
     private func initViews() {
+        setupBackgroundImage()
+        
+        // можно разом активировать, но так было удобнее
         view.addSubview(activityIndicator)
         NSLayoutConstraint.activate(
             [
@@ -160,33 +150,32 @@ class CurrentWeatherViewController: UIViewController {
             ]
         )
         
-        imageView.contentMode = .center
-        view.addSubview(imageView)
+        view.addSubview(weatherIconView)
         NSLayoutConstraint.activate(
             [
-                imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-                imageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-                imageView.heightAnchor.constraint(equalToConstant: 50),
-                imageView.widthAnchor.constraint(equalToConstant: 50)
+                weatherIconView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+                weatherIconView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+                weatherIconView.heightAnchor.constraint(equalToConstant: 50),
+                weatherIconView.widthAnchor.constraint(equalToConstant: 50)
             ]
         )
         
-        view.addSubview(tempLabel)
+        view.addSubview(temperatureLabel)
         NSLayoutConstraint.activate([
-            tempLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            tempLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            temperatureLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         
         view.addSubview(cityLabel)
         NSLayoutConstraint.activate([
             cityLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            cityLabel.bottomAnchor.constraint(equalTo: tempLabel.topAnchor, constant: -8)
+            cityLabel.bottomAnchor.constraint(equalTo: temperatureLabel.topAnchor, constant: -8)
         ])
         
         view.addSubview(timeLabel)
         NSLayoutConstraint.activate([
             timeLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            timeLabel.topAnchor.constraint(equalTo: tempLabel.bottomAnchor, constant: 8)
+            timeLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 8)
         ])
     }
     
@@ -198,17 +187,27 @@ class CurrentWeatherViewController: UIViewController {
     }
     
     private func setupNavBar() {
+        // настройка прозрачного тулбара
         if let navigationController = navigationController {
             navigationController.navigationBar.setBackgroundImage(UIImage(), for: .default)
             navigationController.navigationBar.shadowImage = UIImage()
             navigationController.navigationBar.isTranslucent = true
             navigationController.view.backgroundColor = .clear
         }
+        
+        let rightButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(onNavBarButtonClicked))
+        rightButton.tintColor = .white
+        navigationItem.rightBarButtonItem = rightButton
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftBarButtomSwithView)
+        presenter.handleTogglePosition()
     }
     
+    /// Настройка фона экрана, в отдельной функции для удобства
     private func setupBackgroundImage() {
         view.addSubview(imageViewBackground)
         view.sendSubviewToBack(imageViewBackground)
+        self.presenter.handleBackgroundImage()
         NSLayoutConstraint.activate(
             [
                 imageViewBackground.topAnchor.constraint(equalTo: view.topAnchor),
@@ -220,6 +219,7 @@ class CurrentWeatherViewController: UIViewController {
     }
     
     private func showCurrentTime() {
+        // todo в презентер?
         let currentTime = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = .medium
@@ -227,18 +227,14 @@ class CurrentWeatherViewController: UIViewController {
         timeLabel.text = dateFormatter.string(from: currentTime)
     }
 
-    private func initIcon(iconUrl: URL) {
-        imageView.loadImage(url: iconUrl)
-    }
-    
     private func initInfo(temp: Double, city: String) {
         DispatchQueue.main.async() { [weak self] in
             let measurementFormatter = MeasurementFormatter()
             measurementFormatter.numberFormatter.maximumFractionDigits = 0
             measurementFormatter.unitOptions = .providedUnit
             let result = Measurement(value: temp, unit: UnitTemperature.kelvin).converted(to: UnitTemperature.celsius)
-            self?.tempLabel.text = String(measurementFormatter.string(from: result))
-            self?.tempLabel.font = UIFont(name: "EuphemiaUCAS-Bold", size: 50)
+            self?.temperatureLabel.text = String(measurementFormatter.string(from: result))
+            self?.temperatureLabel.font = UIFont(name: "EuphemiaUCAS-Bold", size: 50)
 
             self?.cityLabel.text = city
             self?.showCurrentTime()
@@ -266,15 +262,35 @@ extension CurrentWeatherViewController : CLLocationManagerDelegate {
 }
 
 extension CurrentWeatherViewController : CurrentWeatherPresenterDelegateProtocol {
-    func showLocalWeather(result: CurrentWeather) {
+    
+    func showWeatherIcon(id: String) {
+        // todo надо подумать что можно сделать, вынести загрузку в презентер или хотя бы формирование урла
+        if let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
+         .appendingPathComponent("\(id)@2x")
+            .appendingPathExtension("png") {
+            self.weatherIconView.loadImage(url: iconUrl)
+        }
+    }
+    
+    func changeBackgroundImage(name: String) {
+        imageViewBackground.image = UIImage(named: name)
+    }
+    
+    func setSwitch(isEnabled: Bool) {
+        toggle.setOn(isEnabled, animated: false)
+    }
+    
+    func showLocalWeather2(presentationModel: CurrentWeatherPresentationModel) {
         DispatchQueue.main.async {
-            if let icon = result.weather.first?.icon,
-               let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
-                .appendingPathComponent("\(icon)@2x")
-                .appendingPathExtension("png") {
-                self.imageView.loadImage(url: iconUrl)
-            }
-            self.initInfo(temp: result.main.temp, city: result.name)
+            self.temperatureLabel.text = presentationModel.temperature
+            self.cityLabel.text = presentationModel.city
+            self.timeLabel.text = presentationModel.date
+        }
+    }
+    
+    func showWeatherIcon(imageData: Data) {
+        DispatchQueue.main.async {
+            self.weatherIconView.image = UIImage(data: imageData)
         }
     }
     

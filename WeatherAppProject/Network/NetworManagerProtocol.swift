@@ -22,6 +22,4 @@ protocol NetworkManagerProtocol {
     func getCurrentWeather(weatherType: WeatherType, completion: @escaping (Result<CurrentWeather, ErrorMessage>) -> Void)
     
     func getFiveDaysWeather(weatherType: WeatherType, completion: @escaping (Result<FiveDaysWeatherModel, ErrorMessage>) -> Void)
-//    
-//    func getThirtyDaysWeather(weatherType: WeatherType, completion: @escaping (Result<Welcome, ErrorMessage>) -> Void)
 }

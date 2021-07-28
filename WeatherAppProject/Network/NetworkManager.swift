@@ -8,7 +8,7 @@
 import Foundation
 
 class NetworkManager: NetworkManagerProtocol {
-    
+
     let baseUrl = "https://api.openweathermap.org/data/2.5"
     
     func getCurrentWeather(weatherType: WeatherType, completion: @escaping (Result<CurrentWeather, ErrorMessage>) -> Void) {

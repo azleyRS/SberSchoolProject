@@ -29,7 +29,9 @@
 		E8B5D83B26ADF8920031E09C /* CoreDataWeatherEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D83926ADF8920031E09C /* CoreDataWeatherEntity+CoreDataProperties.swift */; };
 		E8B5D83D26AE91290031E09C /* CollectionWeatherPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D83C26AE91290031E09C /* CollectionWeatherPresenter.swift */; };
 		E8B5D83F26B00CE60031E09C /* HeaderCityCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D83E26B00CE60031E09C /* HeaderCityCollectionReusableView.swift */; };
-		E8B5D84126B04D060031E09C /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D84026B04D060031E09C /* UserSettings.swift */; };
+		E8B5D84426B16B0D0031E09C /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D84326B16B0D0031E09C /* CoreDataService.swift */; };
+		E8B5D84726B16C670031E09C /* AssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D84626B16C670031E09C /* AssemblyBuilder.swift */; };
+		E8B5D84926B17FEB0031E09C /* UserDefaultsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D84826B17FEB0031E09C /* UserDefaultsService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,7 +59,9 @@
 		E8B5D83926ADF8920031E09C /* CoreDataWeatherEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreDataWeatherEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		E8B5D83C26AE91290031E09C /* CollectionWeatherPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionWeatherPresenter.swift; sourceTree = "<group>"; };
 		E8B5D83E26B00CE60031E09C /* HeaderCityCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCityCollectionReusableView.swift; sourceTree = "<group>"; };
-		E8B5D84026B04D060031E09C /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		E8B5D84326B16B0D0031E09C /* CoreDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataService.swift; sourceTree = "<group>"; };
+		E8B5D84626B16C670031E09C /* AssemblyBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssemblyBuilder.swift; sourceTree = "<group>"; };
+		E8B5D84826B17FEB0031E09C /* UserDefaultsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +94,7 @@
 		E8626F70269B0CBE00A6DAC7 /* WeatherAppProject */ = {
 			isa = PBXGroup;
 			children = (
+				E8B5D84226B16AF30031E09C /* Services */,
 				E8B5D83426AB26DF0031E09C /* Data */,
 				E8B5D82926A6C24C0031E09C /* CurrentWeather */,
 				E8B5D82626A60DBD0031E09C /* CollectionWeather */,
@@ -101,7 +106,7 @@
 				E8626F7C269B0CBF00A6DAC7 /* LaunchScreen.storyboard */,
 				E8626F7F269B0CBF00A6DAC7 /* Info.plist */,
 				E8B5D83226AAD4A50031E09C /* Extensions.swift */,
-				E8B5D84026B04D060031E09C /* UserSettings.swift */,
+				E8B5D84626B16C670031E09C /* AssemblyBuilder.swift */,
 			);
 			path = WeatherAppProject;
 			sourceTree = "<group>";
@@ -109,7 +114,6 @@
 		E8626F85269E28EB00A6DAC7 /* models */ = {
 			isa = PBXGroup;
 			children = (
-				E8626F86269E290500A6DAC7 /* CurrentWeatherModels.swift */,
 				E8B5D82126A4C1350031E09C /* FiveDaysWeatherModels.swift */,
 				E8B5D83026AACF540031E09C /* CollectionWeatherHolder.swift */,
 			);
@@ -150,8 +154,9 @@
 		E8B5D82926A6C24C0031E09C /* CurrentWeather */ = {
 			isa = PBXGroup;
 			children = (
-				E8626F75269B0CBE00A6DAC7 /* CurrentWeatherViewController.swift */,
-				E8B5D82A26A6C29B0031E09C /* CurrentWeatherPresenter.swift */,
+				E8B5D84C26B196F80031E09C /* Model */,
+				E8B5D84B26B188150031E09C /* View */,
+				E8B5D84A26B186310031E09C /* Presenter */,
 			);
 			path = CurrentWeather;
 			sourceTree = "<group>";
@@ -164,6 +169,39 @@
 				E8B5D83926ADF8920031E09C /* CoreDataWeatherEntity+CoreDataProperties.swift */,
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		E8B5D84226B16AF30031E09C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				E8B5D84326B16B0D0031E09C /* CoreDataService.swift */,
+				E8B5D84826B17FEB0031E09C /* UserDefaultsService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		E8B5D84A26B186310031E09C /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				E8B5D82A26A6C29B0031E09C /* CurrentWeatherPresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
+		E8B5D84B26B188150031E09C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E8626F75269B0CBE00A6DAC7 /* CurrentWeatherViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		E8B5D84C26B196F80031E09C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E8626F86269E290500A6DAC7 /* CurrentWeatherModels.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -239,17 +277,19 @@
 				E8B5D83A26ADF8920031E09C /* CoreDataWeatherEntity+CoreDataClass.swift in Sources */,
 				E8B5D83126AACF540031E09C /* CollectionWeatherHolder.swift in Sources */,
 				E8B5D83D26AE91290031E09C /* CollectionWeatherPresenter.swift in Sources */,
-				E8B5D84126B04D060031E09C /* UserSettings.swift in Sources */,
 				E8B5D82026A4B9380031E09C /* HoursPresenter.swift in Sources */,
 				E8B5D83B26ADF8920031E09C /* CoreDataWeatherEntity+CoreDataProperties.swift in Sources */,
 				E8626F8D26A304C200A6DAC7 /* HoursWeatherViewController.swift in Sources */,
+				E8B5D84426B16B0D0031E09C /* CoreDataService.swift in Sources */,
 				E8626F87269E290500A6DAC7 /* CurrentWeatherModels.swift in Sources */,
 				E8B5D81C26A47B110031E09C /* WeatherTableViewCell.swift in Sources */,
 				E8B5D82226A4C1350031E09C /* FiveDaysWeatherModels.swift in Sources */,
+				E8B5D84926B17FEB0031E09C /* UserDefaultsService.swift in Sources */,
 				E8B5D82B26A6C29B0031E09C /* CurrentWeatherPresenter.swift in Sources */,
 				E8B5D82826A60DFD0031E09C /* CollectionWeatherViewController.swift in Sources */,
 				E8B5D82D26A9B2D60031E09C /* CustomCollectionViewCell.swift in Sources */,
 				E8B5D83F26B00CE60031E09C /* HeaderCityCollectionReusableView.swift in Sources */,
+				E8B5D84726B16C670031E09C /* AssemblyBuilder.swift in Sources */,
 				E8626F9526A3B44D00A6DAC7 /* NetworkManager.swift in Sources */,
 				E8B5D83326AAD4A50031E09C /* Extensions.swift in Sources */,
 				E8626F9326A3B10B00A6DAC7 /* NetworManagerProtocol.swift in Sources */,
