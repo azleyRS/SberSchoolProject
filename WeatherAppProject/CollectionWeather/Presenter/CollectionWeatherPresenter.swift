@@ -22,7 +22,6 @@ class CollectionWeatherPresenter {
     var fetchedRC: NSFetchedResultsController<CoreDataWeatherEntity>?
     
     private let persistentContainer: NSPersistentContainer
-    var collectionDataSource = [HoursCellModel]()
 
     init(persistentContainer: NSPersistentContainer) {
         self.persistentContainer = persistentContainer
@@ -61,6 +60,28 @@ class CollectionWeatherPresenter {
         delegate?.deleteItemsFromView(indexPaths: items)
     }
     
+    public func getNumbersInSection(section: Int) -> Int {
+        do{
+            try fetchedRC?.performFetch()
+        } catch {
+            print("fetchedRC?.performFetch()")
+        }
+        guard let sections = fetchedRC?.sections,
+              let objs = sections[section].objects else {
+            return 0
+        }
+        return objs.count
+    }
+    
+    public func getNumberOfSectons() -> Int {
+        return fetchedRC?.sections?.count ?? 0
+    }
+    
+    public func getHeaderName(indexPath: IndexPath) -> String? {
+        let model = fetchedRC?.sections?[indexPath.section].objects?.first as? CoreDataWeatherEntity
+        return model?.city
+    }
+    
     private func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
@@ -72,7 +93,6 @@ class CollectionWeatherPresenter {
             }
         }
     }
-    
     
     func getCellModel(indexPath: IndexPath) -> HoursCellModel {
         let coreDataModel = self.fetchedRC?.object(at: indexPath)

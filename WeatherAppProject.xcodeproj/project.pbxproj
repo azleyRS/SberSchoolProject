@@ -22,7 +22,6 @@
 		E8B5D82B26A6C29B0031E09C /* CurrentWeatherPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D82A26A6C29B0031E09C /* CurrentWeatherPresenter.swift */; };
 		E8B5D82D26A9B2D60031E09C /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D82C26A9B2D60031E09C /* CustomCollectionViewCell.swift */; };
 		E8B5D82F26A9C7610031E09C /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D82E26A9C7610031E09C /* DetailsViewController.swift */; };
-		E8B5D83126AACF540031E09C /* CollectionWeatherHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D83026AACF540031E09C /* CollectionWeatherHolder.swift */; };
 		E8B5D83326AAD4A50031E09C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D83226AAD4A50031E09C /* Extensions.swift */; };
 		E8B5D83726AB27390031E09C /* WeatherApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D83526AB27390031E09C /* WeatherApp.xcdatamodeld */; };
 		E8B5D83A26ADF8920031E09C /* CoreDataWeatherEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D83826ADF8920031E09C /* CoreDataWeatherEntity+CoreDataClass.swift */; };
@@ -52,7 +51,6 @@
 		E8B5D82A26A6C29B0031E09C /* CurrentWeatherPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherPresenter.swift; sourceTree = "<group>"; };
 		E8B5D82C26A9B2D60031E09C /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
 		E8B5D82E26A9C7610031E09C /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
-		E8B5D83026AACF540031E09C /* CollectionWeatherHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionWeatherHolder.swift; sourceTree = "<group>"; };
 		E8B5D83226AAD4A50031E09C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E8B5D83626AB27390031E09C /* WeatherApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WeatherApp.xcdatamodel; sourceTree = "<group>"; };
 		E8B5D83826ADF8920031E09C /* CoreDataWeatherEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreDataWeatherEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -100,7 +98,7 @@
 				E8B5D82626A60DBD0031E09C /* CollectionWeather */,
 				E8B5D81E26A4B9140031E09C /* HoursWeather */,
 				E8626F8E26A38CBF00A6DAC7 /* Network */,
-				E8626F85269E28EB00A6DAC7 /* models */,
+				E8626F85269E28EB00A6DAC7 /* Models */,
 				E8626F71269B0CBE00A6DAC7 /* AppDelegate.swift */,
 				E8626F7A269B0CBF00A6DAC7 /* Assets.xcassets */,
 				E8626F7C269B0CBF00A6DAC7 /* LaunchScreen.storyboard */,
@@ -111,13 +109,12 @@
 			path = WeatherAppProject;
 			sourceTree = "<group>";
 		};
-		E8626F85269E28EB00A6DAC7 /* models */ = {
+		E8626F85269E28EB00A6DAC7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				E8B5D82126A4C1350031E09C /* FiveDaysWeatherModels.swift */,
-				E8B5D83026AACF540031E09C /* CollectionWeatherHolder.swift */,
 			);
-			path = models;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		E8626F8E26A38CBF00A6DAC7 /* Network */ = {
@@ -132,9 +129,8 @@
 		E8B5D81E26A4B9140031E09C /* HoursWeather */ = {
 			isa = PBXGroup;
 			children = (
-				E8B5D81F26A4B9380031E09C /* HoursPresenter.swift */,
-				E8626F8C26A304C200A6DAC7 /* HoursWeatherViewController.swift */,
-				E8B5D81B26A47B110031E09C /* WeatherTableViewCell.swift */,
+				E8B5D84E26B2D8CC0031E09C /* View */,
+				E8B5D84D26B2D8C10031E09C /* Presenter */,
 			);
 			path = HoursWeather;
 			sourceTree = "<group>";
@@ -142,11 +138,8 @@
 		E8B5D82626A60DBD0031E09C /* CollectionWeather */ = {
 			isa = PBXGroup;
 			children = (
-				E8B5D82726A60DFD0031E09C /* CollectionWeatherViewController.swift */,
-				E8B5D82C26A9B2D60031E09C /* CustomCollectionViewCell.swift */,
-				E8B5D82E26A9C7610031E09C /* DetailsViewController.swift */,
-				E8B5D83C26AE91290031E09C /* CollectionWeatherPresenter.swift */,
-				E8B5D83E26B00CE60031E09C /* HeaderCityCollectionReusableView.swift */,
+				E8B5D85126B2E2880031E09C /* View */,
+				E8B5D85026B2E2800031E09C /* Presenter */,
 			);
 			path = CollectionWeather;
 			sourceTree = "<group>";
@@ -202,6 +195,42 @@
 				E8626F86269E290500A6DAC7 /* CurrentWeatherModels.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		E8B5D84D26B2D8C10031E09C /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				E8B5D81F26A4B9380031E09C /* HoursPresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
+		E8B5D84E26B2D8CC0031E09C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E8626F8C26A304C200A6DAC7 /* HoursWeatherViewController.swift */,
+				E8B5D81B26A47B110031E09C /* WeatherTableViewCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		E8B5D85026B2E2800031E09C /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				E8B5D83C26AE91290031E09C /* CollectionWeatherPresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
+		E8B5D85126B2E2880031E09C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E8B5D83E26B00CE60031E09C /* HeaderCityCollectionReusableView.swift */,
+				E8B5D82C26A9B2D60031E09C /* CustomCollectionViewCell.swift */,
+				E8B5D82726A60DFD0031E09C /* CollectionWeatherViewController.swift */,
+				E8B5D82E26A9C7610031E09C /* DetailsViewController.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,7 +304,6 @@
 			files = (
 				E8B5D83726AB27390031E09C /* WeatherApp.xcdatamodeld in Sources */,
 				E8B5D83A26ADF8920031E09C /* CoreDataWeatherEntity+CoreDataClass.swift in Sources */,
-				E8B5D83126AACF540031E09C /* CollectionWeatherHolder.swift in Sources */,
 				E8B5D83D26AE91290031E09C /* CollectionWeatherPresenter.swift in Sources */,
 				E8B5D82026A4B9380031E09C /* HoursPresenter.swift in Sources */,
 				E8B5D83B26ADF8920031E09C /* CoreDataWeatherEntity+CoreDataProperties.swift in Sources */,

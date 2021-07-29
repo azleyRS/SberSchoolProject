@@ -7,14 +7,16 @@
 
 import UIKit
 
+
+/// Кастомная ячейка для отображения погоды по часам
 class WeatherTableViewCell: UITableViewCell {
     
+    /// Идентификатор ячейка
     static let identifier = "WeatherTableViewCell"
     
     lazy private var timeLabel: UILabel = {
         let result = UILabel()
         result.translatesAutoresizingMaskIntoConstraints = false
-        result.text = "Time goes here"
         result.textColor = .white
         result.font = UIFont(name: "ArialRoundedMTBold", size: 20)
         return result
@@ -77,7 +79,7 @@ class WeatherTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-
+        
         contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
     }
     
@@ -102,7 +104,6 @@ class WeatherTableViewCell: UITableViewCell {
             timeLabel.leadingAnchor.constraint(equalTo: image.trailingAnchor),
             
             
-            
             temperatureLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 4),
             temperatureLabel.leadingAnchor.constraint(equalTo: image.trailingAnchor),
             
@@ -113,9 +114,6 @@ class WeatherTableViewCell: UITableViewCell {
             descriptionLabel.leadingAnchor.constraint(equalTo: image.trailingAnchor),
             descriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 4),
             
-            
-
-
             windLabel.topAnchor.constraint(equalTo: humidityLabel.bottomAnchor, constant: 4),
             windLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             
@@ -124,16 +122,16 @@ class WeatherTableViewCell: UITableViewCell {
         super.updateConstraints()
     }
     
+    
+    /// Обновить ячейку
+    /// - Parameter weater: модель с информацией для отображения
     func updateView(weater: HoursCellModel){
-        //cityLabel.text = weater.city
         timeLabel.text = weater.time
-        
-        
-        
         temperatureLabel.text = weater.temperature
         humidityLabel.text = weater.humidity
         descriptionLabel.text = weater.description
         windLabel.text = weater.wind
+        // todo можно вынести это в модель
         if  let imageId = weater.imageId,
             let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
             .appendingPathComponent("\(imageId)@2x")

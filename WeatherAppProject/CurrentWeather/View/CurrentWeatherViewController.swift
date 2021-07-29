@@ -217,29 +217,6 @@ class CurrentWeatherViewController: UIViewController {
             ]
         )
     }
-    
-    private func showCurrentTime() {
-        // todo в презентер?
-        let currentTime = Date()
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .medium
-        dateFormatter.dateStyle = .long
-        timeLabel.text = dateFormatter.string(from: currentTime)
-    }
-
-    private func initInfo(temp: Double, city: String) {
-        DispatchQueue.main.async() { [weak self] in
-            let measurementFormatter = MeasurementFormatter()
-            measurementFormatter.numberFormatter.maximumFractionDigits = 0
-            measurementFormatter.unitOptions = .providedUnit
-            let result = Measurement(value: temp, unit: UnitTemperature.kelvin).converted(to: UnitTemperature.celsius)
-            self?.temperatureLabel.text = String(measurementFormatter.string(from: result))
-            self?.temperatureLabel.font = UIFont(name: "EuphemiaUCAS-Bold", size: 50)
-
-            self?.cityLabel.text = city
-            self?.showCurrentTime()
-        }
-    }
 }
 
 extension CurrentWeatherViewController : CLLocationManagerDelegate {
@@ -263,13 +240,8 @@ extension CurrentWeatherViewController : CLLocationManagerDelegate {
 
 extension CurrentWeatherViewController : CurrentWeatherPresenterDelegateProtocol {
     
-    func showWeatherIcon(id: String) {
-        // todo надо подумать что можно сделать, вынести загрузку в презентер или хотя бы формирование урла
-        if let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
-         .appendingPathComponent("\(id)@2x")
-            .appendingPathExtension("png") {
-            self.weatherIconView.loadImage(url: iconUrl)
-        }
+    func showWeatherIcon(url: URL) {
+        self.weatherIconView.loadImage(url: url)
     }
     
     func changeBackgroundImage(name: String) {
@@ -280,7 +252,7 @@ extension CurrentWeatherViewController : CurrentWeatherPresenterDelegateProtocol
         toggle.setOn(isEnabled, animated: false)
     }
     
-    func showLocalWeather2(presentationModel: CurrentWeatherPresentationModel) {
+    func showLocalWeather(presentationModel: CurrentWeatherPresentationModel) {
         DispatchQueue.main.async {
             self.temperatureLabel.text = presentationModel.temperature
             self.cityLabel.text = presentationModel.city

@@ -7,10 +7,14 @@
 
 import UIKit
 
+
+/// Кастомная вьюшка для отображения информации о погоде на экране с сохраненной погодой
 class CustomCollectionViewCell: UICollectionViewCell {
     
+    /// Идентификатор ячейки
     static let identifier = "CustomCollectionViewCell"
     
+    /// маркер является ли ячейка редактируемой в данный момент
     var isEditing: Bool = false {
         didSet {
             editingCircle.isHidden = !isEditing
@@ -94,6 +98,8 @@ class CustomCollectionViewCell: UICollectionViewCell {
         return true
     }
     
+    /// Обновить информацию во вьюшке
+    /// - Parameter weatherModel: модель для отображения информации во вьюшке
     func updateCellInfo(weatherModel: HoursCellModel) {
         self.timeLabel.text = weatherModel.time
         

@@ -8,39 +8,66 @@
 import Foundation
 import CoreData
 
+/// Протокол делегата презентера для экрана с прогнозом погоды на 5 дней / каждые 3 часа
 protocol HoursPresenterDelegateProtocol: AnyObject {
         
+    /// Отобразить список с прогнозом погоды на 5 дней / каждые три дня
     func showLocalHoursWeather()
     
+    /// Отобразить заголовок экрана
+    /// - Parameter title: текст заголовка
     func setTitle(title: String)
-    
 }
 
+/// Презентер экрана с прогнозом погоды на 5 дней / каждые 3 часа
 class HoursPresenter {
     
     private(set) var weatherData = [HoursCellModel]()
     
-    weak var delegate: HoursPresenterDelegateProtocol?
+    private weak var delegate: HoursPresenterDelegateProtocol?
     
     private let networkManager: NetworkManagerProtocol
-    private let persistentContainer: NSPersistentContainer
+    private let persistentService: PersistentServiceProtocol
     
-    init(networkManager: NetworkManagerProtocol, persistentContainer: NSPersistentContainer) {
+    
+    /// Конструктор презентера
+    /// - Parameters:
+    ///   - networkManager: менеджер для сетевых запросов
+    ///   - persistentService: сервис для сохранения данных
+    init(networkManager: NetworkManagerProtocol, persistentService: PersistentServiceProtocol) {
         self.networkManager = networkManager
-        self.persistentContainer = persistentContainer
+        self.persistentService = persistentService
     }
     
+    
+    /// Загрузить прогноз погоды по координатам
+    /// - Parameters:
+    ///   - lat: широта
+    ///   - lon: долгота
     public func loadHoursWeather(lat: String, lon: String) {
         networkManager.getFiveDaysWeather(weatherType: .local(latitude: lat, longitude: lon), completion: handleNetworkResult)
     }
     
+    
+    /// Установить делегат презентера
+    /// - Parameter delegate: делегат презентера
     public func setViewDelegate(delegate: HoursPresenterDelegateProtocol) {
         self.delegate = delegate
     }
     
+    
+    /// Загрузить прогноз погоды по названию города
+    /// - Parameter city: название города
     public func loadHoursCityWeather(city: String) {
         self.networkManager.getFiveDaysWeather(weatherType: .city(city: city), completion: self.handleNetworkResult)
     }
+    
+    
+    /// Сохранить текущий список с прогнозом погоды
+    func saveWeather() {
+        persistentService.saveWeatherList(weatherList: weatherData)
+    }
+    
     
     private lazy var handleNetworkResult: ((Result<FiveDaysWeatherModel, ErrorMessage>) -> Void) = {
         [weak self] result in
@@ -82,34 +109,6 @@ class HoursPresenter {
             self?.delegate?.setTitle(title: resultList.first?.city ?? "Choose city")
         case .failure(let err):
             print(err)
-        }
-    }
-    
-    func saveWeather() {
-        // here saving data
-        weatherData.forEach {
-            let weatherEntity = CoreDataWeatherEntity(entity: CoreDataWeatherEntity.entity(), insertInto: persistentContainer.viewContext)
-            weatherEntity.city = $0.city
-            weatherEntity.time = $0.time
-            weatherEntity.temperature = $0.temperature
-            weatherEntity.icon = $0.imageId
-            weatherEntity.humidity = $0.humidity
-            weatherEntity.weatherDescription = $0.description
-            weatherEntity.wind = $0.wind
-            saveContext()
-            print(weatherEntity)
-        }
-    }
-    
-    private func saveContext() {
-        let context = persistentContainer.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                let error = error as NSError
-                fatalError("Some fatal error \(error)")
-            }
         }
     }
 }

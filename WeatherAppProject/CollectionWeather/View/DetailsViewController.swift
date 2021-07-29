@@ -7,6 +7,8 @@
 
 import UIKit
 
+
+/// ViewController для отображения экрана с температурой, нужен лишь для кастомных анимаций
 class DetailsViewController: UIViewController {
     
     lazy var label: UILabel = {
@@ -15,6 +17,8 @@ class DetailsViewController: UIViewController {
         return result
     }()
     
+    /// Конструктор
+    /// - Parameter text: температура для оторажения
     init(text: String) {
         super.init(nibName: nil, bundle: nil)
         self.label.text = text

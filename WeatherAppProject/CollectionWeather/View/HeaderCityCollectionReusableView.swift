@@ -7,8 +7,11 @@
 
 import UIKit
 
+
+/// Вьюшка для хедера CollectionView
 class HeaderCityCollectionReusableView: UICollectionReusableView {
     
+    /// Идентификатор хедера
     static let identifier = "HeaderCityCollectionReusableView"
     
     private let label: UILabel = {
@@ -20,7 +23,8 @@ class HeaderCityCollectionReusableView: UICollectionReusableView {
     }()
     
     
-
+    /// Настроить отображение хедера
+    /// - Parameter city: наименование города
     public func configurate(city: String) {
         label.text = city
         addSubview(label)

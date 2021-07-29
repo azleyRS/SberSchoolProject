@@ -15,6 +15,7 @@ protocol AssemblyBuilderProtocol {
     func createRootTabBar() -> UITabBarController
 }
 
+/// Реализация билдера для зависимостей/экранов
 final class AssemblyBuilder : AssemblyBuilderProtocol {
     
     private let networkManager: NetworkManagerProtocol = NetworkManager()
@@ -30,6 +31,8 @@ final class AssemblyBuilder : AssemblyBuilderProtocol {
         })
         return container
     }()
+    
+    private lazy var persistantStorage: PersistentServiceProtocol = CoreDataPersistantService(persistentContainer: persistentContainer)
     
     func createRootTabBar() -> UITabBarController {
         let tabBarController = UITabBarController()
@@ -52,7 +55,7 @@ final class AssemblyBuilder : AssemblyBuilderProtocol {
     
     /// Создать экран с прогнозом на 5 дней (каждые 3 часа подробно)
     private func createHoursWeatherScreen() -> UIViewController {
-        let presenter = HoursPresenter(networkManager: networkManager, persistentContainer: persistentContainer)
+        let presenter = HoursPresenter(networkManager: networkManager, persistentService: persistantStorage)
         let hoursWeatherViewController = HoursWeatherViewController(presenter: presenter)
         hoursWeatherViewController.tabBarItem = UITabBarItem(title: "5 Days / 3 Hour Forecast", image: UIImage(systemName: "timer"), tag: 2)
         return UINavigationController(rootViewController: hoursWeatherViewController)

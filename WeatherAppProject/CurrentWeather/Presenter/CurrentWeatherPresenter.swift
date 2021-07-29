@@ -14,16 +14,15 @@ protocol CurrentWeatherPresenterDelegateProtocol: AnyObject {
     
     /// Отобразить текущую погоду
     /// - Parameter presentationModel: модель с информацией о текущей погоде
-    func showLocalWeather2(presentationModel: CurrentWeatherPresentationModel)
+    func showLocalWeather(presentationModel: CurrentWeatherPresentationModel)
     
     /// Отобразить иконку соответствующую текущей погоде
     /// - Parameter imageData: данные об иконке
     func showWeatherIcon(imageData: Data)
     
-    
     /// Отобразить иконку соответствующую текущей погоде
     /// - Parameter id: id иконки
-    func showWeatherIcon(id: String)
+    func showWeatherIcon(url: URL)
     
     /// Отобразить алерт
     /// - Parameter title: текст заголовка алерта
@@ -106,9 +105,13 @@ class CurrentWeatherPresenter {
                                                                     temperature: temperature,
                                                                     date: date)
             
-            self?.delegate?.showLocalWeather2(presentationModel: presentationModel)
+            self?.delegate?.showLocalWeather(presentationModel: presentationModel)
             if let id = res.weather.first?.icon {
-                self?.delegate?.showWeatherIcon(id: id)
+                if let iconUrl = URL(string: "https://openweathermap.org/img/wn")?
+                    .appendingPathComponent("\(id)@2x")
+                    .appendingPathExtension("png") {
+                    self?.delegate?.showWeatherIcon(url: iconUrl)
+                }
             }
         case .failure(let err):
             if let delegate = self?.delegate,

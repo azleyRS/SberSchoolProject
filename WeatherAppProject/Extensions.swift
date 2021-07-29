@@ -10,8 +10,7 @@ import UIKit
 
 var imageCash = NSCache<NSString, UIImage>()
 
-
-// в идеале бы в сервис вынести, но неохота тащить UIKit сквозь все слои - подумаю что можно сделать
+// в идеале бы в сервис вынести, но неохота тащить UIKit сквозь все слои
 extension UIImageView {
     func loadImage(url: URL) {
         
