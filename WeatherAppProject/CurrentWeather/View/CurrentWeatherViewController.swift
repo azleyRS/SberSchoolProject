@@ -260,12 +260,6 @@ extension CurrentWeatherViewController : CurrentWeatherPresenterDelegateProtocol
         }
     }
     
-    func showWeatherIcon(imageData: Data) {
-        DispatchQueue.main.async {
-            self.weatherIconView.image = UIImage(data: imageData)
-        }
-    }
-    
     func showAlert(title: String) {
         DispatchQueue.main.async {
             let errorAlert = UIAlertController(title: title, message: "Try again later", preferredStyle: .alert)

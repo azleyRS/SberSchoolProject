@@ -17,10 +17,6 @@ protocol CurrentWeatherPresenterDelegateProtocol: AnyObject {
     func showLocalWeather(presentationModel: CurrentWeatherPresentationModel)
     
     /// Отобразить иконку соответствующую текущей погоде
-    /// - Parameter imageData: данные об иконке
-    func showWeatherIcon(imageData: Data)
-    
-    /// Отобразить иконку соответствующую текущей погоде
     /// - Parameter id: id иконки
     func showWeatherIcon(url: URL)
     
@@ -45,7 +41,7 @@ protocol CurrentWeatherPresenterDelegateProtocol: AnyObject {
 
 class CurrentWeatherPresenter {
     
-    weak var delegate : CurrentWeatherPresenterDelegateProtocol?
+    private weak var delegate : CurrentWeatherPresenterDelegateProtocol?
     
     private let networkManager: NetworkManagerProtocol
     private var backgroundImageService : CurrentWeatherBackgroundImageServiceProtocol
@@ -95,7 +91,7 @@ class CurrentWeatherPresenter {
             let convertedTemperature = Measurement(value: res.main.temp, unit: UnitTemperature.kelvin).converted(to: UnitTemperature.celsius)
             let temperature = String(measurementFormatter.string(from: convertedTemperature))
 
-            let currentTime = Date()
+            let currentTime = Date(timeIntervalSince1970: TimeInterval(res.dt))
             let dateFormatter = DateFormatter()
             dateFormatter.timeStyle = .medium
             dateFormatter.dateStyle = .long
