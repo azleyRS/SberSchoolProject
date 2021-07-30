@@ -34,6 +34,10 @@
 		E8B5D85A26B3D1E20031E09C /* WeatherAppProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D85926B3D1E20031E09C /* WeatherAppProjectTests.swift */; };
 		E8B5D86226B3D2940031E09C /* CurrentWeatherPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D86126B3D2940031E09C /* CurrentWeatherPresenterTest.swift */; };
 		E8B5D86826B46B300031E09C /* HoursWeatherPresenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B5D86726B46B300031E09C /* HoursWeatherPresenterTest.swift */; };
+		E8B5D86E26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.47.png in Resources */ = {isa = PBXBuildFile; fileRef = E8B5D86A26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.47.png */; };
+		E8B5D86F26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.51.png in Resources */ = {isa = PBXBuildFile; fileRef = E8B5D86B26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.51.png */; };
+		E8B5D87026B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.54.png in Resources */ = {isa = PBXBuildFile; fileRef = E8B5D86C26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.54.png */; };
+		E8B5D87126B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.57.png in Resources */ = {isa = PBXBuildFile; fileRef = E8B5D86D26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.57.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +82,10 @@
 		E8B5D85B26B3D1E20031E09C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E8B5D86126B3D2940031E09C /* CurrentWeatherPresenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherPresenterTest.swift; sourceTree = "<group>"; };
 		E8B5D86726B46B300031E09C /* HoursWeatherPresenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoursWeatherPresenterTest.swift; sourceTree = "<group>"; };
+		E8B5D86A26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.47.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.47.png"; path = "../../../../Desktop/Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.47.png"; sourceTree = "<group>"; };
+		E8B5D86B26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.51.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.51.png"; path = "../../../../Desktop/Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.51.png"; sourceTree = "<group>"; };
+		E8B5D86C26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.54.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.54.png"; path = "../../../../Desktop/Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.54.png"; sourceTree = "<group>"; };
+		E8B5D86D26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.57.png"; path = "../../../../Desktop/Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.57.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +127,7 @@
 		E8626F70269B0CBE00A6DAC7 /* WeatherAppProject */ = {
 			isa = PBXGroup;
 			children = (
+				E8B5D86926B48DDC0031E09C /* res */,
 				E8B5D84226B16AF30031E09C /* Services */,
 				E8B5D83426AB26DF0031E09C /* Data */,
 				E8B5D82926A6C24C0031E09C /* CurrentWeather */,
@@ -303,6 +312,17 @@
 			path = Presenter;
 			sourceTree = "<group>";
 		};
+		E8B5D86926B48DDC0031E09C /* res */ = {
+			isa = PBXGroup;
+			children = (
+				E8B5D86A26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.47.png */,
+				E8B5D86B26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.51.png */,
+				E8B5D86C26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.54.png */,
+				E8B5D86D26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.57.png */,
+			);
+			path = res;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -384,7 +404,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				E8626F7E269B0CBF00A6DAC7 /* LaunchScreen.storyboard in Resources */,
+				E8B5D87126B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.57.png in Resources */,
+				E8B5D86E26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.47.png in Resources */,
+				E8B5D87026B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.54.png in Resources */,
 				E8626F7B269B0CBF00A6DAC7 /* Assets.xcassets in Resources */,
+				E8B5D86F26B48DFD0031E09C /* Simulator Screen Shot - iPhone 8 - 2021-07-30 at 22.39.51.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
