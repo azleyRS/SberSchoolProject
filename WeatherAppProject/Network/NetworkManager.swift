@@ -120,10 +120,4 @@ class NetworkManager: NetworkManagerProtocol {
         task.resume()
 
     }
-//    
-//    func getThirtyDaysWeather(weatherType: WeatherType, completion: @escaping (Result<Welcome, ErrorMessage>) -> Void) {
-//        print("getThirtyDaysWeather")
-//    }
-    
-    
 }
